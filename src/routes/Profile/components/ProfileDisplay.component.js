@@ -9,8 +9,10 @@ import {
 } from '@mui/material';
 import * as React from 'react';
 import EditIcon from "@mui/icons-material/Edit"
+import { useNavigate } from 'react-router-dom';
 
-export default function ProfileDisplay({ user }) {
+export default function ProfileDisplay({ user, logined = "false" }) {
+    const navigate = useNavigate();
     return (
         <Card
             sx={{ width: '100%', my: 2 }}
@@ -34,18 +36,23 @@ export default function ProfileDisplay({ user }) {
                     {`Bio: ${user.bio}`}
                 </Typography>
             </CardContent>
-            <CardActions disableSpacing>
-                <IconButton aria-label="edit">
-                    <EditIcon />
-                    <Typography
-                        variant="body2"
-                        color="text.primary"
-                        sx={{ pl: 1 }}
+            {logined !== "false" ?
+                <CardActions disableSpacing>
+                    <IconButton 
+                        aria-label="edit"
+                        onClick={() => navigate(`/users/${user.user_id}/edit`)}
                     >
-                        Edit Profile
-                    </Typography>
-                </IconButton>
-            </CardActions>
+                        <EditIcon />
+                        <Typography
+                            variant="body2"
+                            color="text.primary"
+                            sx={{ pl: 1 }}
+                        >
+                            Edit Profile
+                        </Typography>
+                    </IconButton>
+                </CardActions> : ""
+            }
         </Card>
     )
 }

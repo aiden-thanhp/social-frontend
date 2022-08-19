@@ -10,7 +10,7 @@ const appBio = "Social Site helps you connect and share with the people in your 
 
 function SignupPage() {
   return (
-    <Box disableGlutters>
+    <Box>
         <Grid container spacing={2} sx={{ mt: 2 }}>
           <Grid 
             item 

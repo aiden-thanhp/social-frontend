@@ -7,9 +7,9 @@ import {
 } from "@mui/material";
 
 
-function MainLayout({ pages, children }) {
+function MainLayout({ pages, children, token, currentUserId }) {
   return (
-    <Box disableGlutters>
+    <Box>
       <Box
         sx={{ 
           display: { xs: "block", sm: "none", md: "none" },
@@ -31,7 +31,7 @@ function MainLayout({ pages, children }) {
       >
         <Grid container spacing={3}>
           <Grid item sm={4}>
-            <Menu pages={pages} />
+            <Menu pages={pages} token={token} currentUserId={currentUserId} />
             <News top={2} />
           </Grid>
           <Grid item sm={8}>
@@ -49,7 +49,7 @@ function MainLayout({ pages, children }) {
       >
         <Grid container spacing={3}>
           <Grid item md={3}>
-            <Menu pages={pages} />
+            <Menu pages={pages} token={token} currentUserId={currentUserId} />
           </Grid>
           <Grid item md={6}>
             {children}

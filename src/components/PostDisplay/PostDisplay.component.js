@@ -8,11 +8,19 @@ import {
     Typography
 } from '@mui/material';
 import * as React from 'react';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate } from 'react-router-dom';
 
-export default function PostDisplay({ post, edit = "true", del = "true", handleDelete }) {
+export default function PostDisplay({ post, logined = "false", handleDelete }) {
+    const navigate = useNavigate();
+
+    let edit = "false";
+    let del = "false"
+    if (logined === "true" ) {
+        edit = "true";
+        del = "true";
+    }
     return (
         <Card
             sx={{ width: '100%', my: 2 }}
@@ -37,18 +45,11 @@ export default function PostDisplay({ post, edit = "true", del = "true", handleD
                 </Typography>
             </CardContent>
             <CardActions disableSpacing>
-                <IconButton aria-label="favorites">
-                    <FavoriteIcon />
-                    <Typography
-                        variant="body2"
-                        color="text.primary"
-                        sx={{ pl: 1 }}
-                    >
-                        {post.likes !== null ? `${post.likes} likes` : `0 likes`}
-                    </Typography>
-                </IconButton>
                 {edit !== "false"
-                    ? <IconButton aria-label="edit">
+                    ? <IconButton 
+                        aria-label="edit"
+                        onClick={() => navigate(`/posts/${post.post_id}/edit`)}
+                    >
                         <EditIcon />
                         <Typography
                             variant="body2"

@@ -21,13 +21,29 @@ import {
     } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
-import ArticleIcon from '@mui/icons-material/Article';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import MessageIcon from '@mui/icons-material/Message';
+import { logout, readUser } from "../../utils/api";
+import { useNavigate } from "react-router-dom";
+import Cookies from "universal-cookie";
 
-const Header = ({ pages, settings, login, user = {} }) => {
+const Header = ({ pages, settings, token, currentUserId }) => {
+    const navigate = useNavigate();
+    const cookies = new Cookies();
     const [state, setState] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [user, setUser] = React.useState({});
+
+    const logined = currentUserId && token ? "true" : "false";
+
+    React.useEffect(() => {
+        if (currentUserId) {
+            const controller = new AbortController();
+            const signal = controller.signal;
+            readUser(currentUserId, signal).then(({ data }) => setUser(data[0]))
+        }
+    }, [currentUserId])
 
     const handleOpenUserMenu =(event) => {
         setAnchorElUser(event.currentTarget)
@@ -36,6 +52,24 @@ const Header = ({ pages, settings, login, user = {} }) => {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     }; 
+
+    async function handleLogOut() {
+        console.log("log out clicked")
+        const currentUser = {
+            username: user.username,
+            token: {token}
+        }
+
+        const controller = new AbortController();
+        const signal = controller.signal;
+        if (window.confirm(`Logout?`)) {
+            cookies.remove("TOKEN", { path: "/" });
+            cookies.remove("USERID", { path: "/" });
+            logout(currentUser, signal)
+                .then(() => navigate("/"))
+                .then(() => { window.location.reload(); })
+        }
+    }
 
     const toggleDrawer = (open) => (event) => {
         if (
@@ -49,7 +83,7 @@ const Header = ({ pages, settings, login, user = {} }) => {
         setState(open)
     };
 
-    if (!login) {
+    if (logined === "false") {
         return (
             <AppBar 
                 position="static"
@@ -68,6 +102,7 @@ const Header = ({ pages, settings, login, user = {} }) => {
                             }}
                             alt="Logo of Social Site"
                             src={Logo}
+                            onClick={() => navigate('/')}
                         />
                         <Typography
                             variant="h5"
@@ -75,13 +110,14 @@ const Header = ({ pages, settings, login, user = {} }) => {
                             component="a"
                             href=""
                             sx={{
-                            mr: 2,
-                            flexGrow: 1,
-                            fontFamily: "sans-serif",
-                            fontWeight: 700,
-                            color: "inherit",
-                            textDecoration: "none"
+                                mr: 2,
+                                flexGrow: 1,
+                                fontFamily: "sans-serif",
+                                fontWeight: 700,
+                                color: "inherit",
+                                textDecoration: "none"
                             }}
+                            onClick={() => navigate("/")}
                         >
                             Social Site
                         </Typography>
@@ -92,12 +128,13 @@ const Header = ({ pages, settings, login, user = {} }) => {
                             component="a"
                             href=""
                             sx={{
-                            mr: 2,
-                            fontFamily: "sans-serif",
-                            fontWeight: 200,
-                            color: "inherit",
-                            textDecoration: "none"
+                                mr: 2,
+                                fontFamily: "sans-serif",
+                                fontWeight: 200,
+                                color: "inherit",
+                                textDecoration: "none"
                             }}
+                            onClick={() => navigate("/login")}
                         >
                             Login
                         </Typography>
@@ -171,14 +208,25 @@ const Header = ({ pages, settings, login, user = {} }) => {
                                                             { 
                                                                 text === 'Home'
                                                                 ? <HomeIcon />
-                                                                : text === 'Posts'
-                                                                ? <ArticleIcon />
+                                                                : text === 'Profile'
+                                                                ? <AccountBoxIcon />
                                                                 : text === 'Friends'
                                                                 ? <PeopleAltIcon />
                                                                 : <MessageIcon />
                                                             }
                                                         </ListItemIcon>
-                                                        <ListItemText primary={text} />
+                                                        <ListItemText 
+                                                            primary={text} 
+                                                            onClick={() => {
+                                                                text === 'Home'
+                                                                ? navigate("/")
+                                                                : text === 'Profile'
+                                                                ? navigate(`/users/${currentUserId}`)
+                                                                : text === 'Friends'
+                                                                ? navigate('/')
+                                                                : navigate('/')
+                                                            }}
+                                                        />
                                                     </ListItemButton>
                                                 </ListItem>
                                             ))}
@@ -238,7 +286,20 @@ const Header = ({ pages, settings, login, user = {} }) => {
                             >
                             {settings.map((setting) => (
                                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                <Typography textAlign="center">{setting}</Typography>
+                                    <Typography 
+                                        textAlign="center"
+                                        onClick={() => {
+                                            setting === 'Account'
+                                            ? navigate(`/users/${currentUserId}`)
+                                            : setting === 'Edit Profile'
+                                            ? navigate(`/users/${currentUserId}/edit`)
+                                            : setting === 'Logout'
+                                            ? handleLogOut()
+                                            : navigate("/")
+                                        }}
+                                    >
+                                        {setting}
+                                    </Typography>
                                 </MenuItem>
                             ))}
                             </Menu>

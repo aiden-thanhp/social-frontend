@@ -38,11 +38,16 @@ const LoginForm = () => {
         const signal = controller.signal;
         login({data: user}, signal).then((result) => {
             const accessToken = result.accessToken;
+            const userId = result.user_id
             cookies.set("TOKEN", accessToken, {
                 path: "/",
+            });
+            cookies.set("USERID", userId, {
+                path: "/"
             })
-            navigate("/");
-        })
+            console.log(cookies.get("TOKEN"))
+            console.log(cookies.get("USERID"))
+        }).then(() => navigate("/"))
     }
 
     return (

@@ -4,28 +4,32 @@ import PostDisplay from '../../components/PostDisplay/PostDisplay.component';
 import { listPosts, readUser } from '../../utils/api';
 import CreatePost from './components/CreatePost.component';
 
-const MainPage = ({ pages }) => {
+const MainPage = ({ pages, currentUserId, token }) => {
     const [posts, setPosts] = React.useState();
     const [user, setUser] = React.useState();
-
-    const userId = '18';
 
     React.useEffect(() => {
         const controller = new AbortController();
         const signal = controller.signal;
 
         listPosts(signal).then(({ data: posts }) => setPosts(posts))
-        readUser(userId, signal).then(({ data }) => setUser(data[0]))
-    }, [])
+        if (currentUserId) {
+            readUser(currentUserId, signal).then(({ data }) => {
+                setUser(data[0]);   
+            })
+        }
+    }, [currentUserId])
     
-    if (posts && user) {
+    if (posts) {
         return (
-            <MainLayout pages={pages} children={
+            <MainLayout pages={pages} token={token} currentUserId={currentUserId} children={
                 <div>
-                    <CreatePost user={user} />
+                    {user ? <CreatePost user={user} /> : "" }
                     {posts.map((post) => {
                         return (
-                            <PostDisplay post={post} edit="false" del="false" />
+                            <div key={post.post_id}>
+                                <PostDisplay post={post} logined="false" />
+                            </div>
                         )
                     })}
                 </div>
@@ -35,6 +39,7 @@ const MainPage = ({ pages }) => {
     }
 
     return <h1>Loading posts here...</h1>
+
 }
 
 export default MainPage;

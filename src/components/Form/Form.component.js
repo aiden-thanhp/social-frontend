@@ -42,11 +42,13 @@ const Form = ({ onSubmit, onCancel = "", formInputs, previousData, buttonName, f
                 {formInputs.map(({ label, name, id, variant }) => {
                     return (
                         <TextField
+                            type={id === "password" ? "password" : ""}
+                            key={id}
                             id={id}
                             label={label}
                             variant={variant}
                             name={name}
-                            value={form[name]}
+                            value={form[name] || ""}
                             onChange={handleChange}
                             fullWidth
                             sx={{

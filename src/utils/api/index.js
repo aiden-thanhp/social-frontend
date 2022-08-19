@@ -62,15 +62,15 @@ export async function readUser(userId, signal) {
     return await fetchJson(url, { signal }, {})
 }
 
-export async function updateUser(updatedUser, signal) {
-    const url = `${API_BASE_URL}/users/${updatedUser.id}`;
+export async function updateUser(userId, updatedUser, signal) {
+    const url = `${API_BASE_URL}/users/${userId}`;
     const options = {
         method: "PUT",
         headers,
         body: JSON.stringify(updatedUser),
         signal,
     };
-    return await fetchJson(url, options, updatedUser)
+    return await fetchJson(url, options, {})
 }
 
 export async function refreshToken(user, signal) {
@@ -110,12 +110,12 @@ export async function createPost(post, signal) {
     return await fetchJson(url, options, {});
 }
 
-export async function updatePost(updatedPost, signal) {
-    const url = `${API_BASE_URL}/posts/${updatedPost.id}`;
+export async function updatePost(postId, updatedPost, signal) {
+    const url = `${API_BASE_URL}/posts/${postId}`;
     const options = {
         method: "PUT",
         headers,
-        body: JSON.stringify({ data: updatedPost }),
+        body: JSON.stringify(updatedPost),
         signal,
     };
     return await fetchJson(url, options, {});
