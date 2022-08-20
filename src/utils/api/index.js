@@ -13,7 +13,8 @@ async function fetchJson(url, options, onCancel) {
         const response = await fetch(url, options);
 
         if (response.status < 200 || response.status > 399) {
-            throw new Error(`${response.status} - ${response.statusText}`)
+            const {error} = await response.json();
+            throw new Error(error)
         }
 
         if (response.status === 204) {
@@ -133,6 +134,7 @@ export async function readPost(postId, signal) {
 }
 
 export async function getNews(signal) {
-    const url = `${NEWS_API_BASE_URL}?q=Apple&from=2022-08-18&sortBy=popularity&apiKey=${NEWS_ACCESS_KEY}`;
-    return await fetchJson(url, { signal }, {});
+    const url = `${NEWS_API_BASE_URL}/search?api-key=${NEWS_ACCESS_KEY}`;
+    const returnedNews = await fetchJson(url, { signal }, {});
+    return returnedNews.response.results
 }

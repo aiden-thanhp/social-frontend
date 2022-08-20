@@ -5,9 +5,7 @@ import {
     Typography,
     List,
     ListItem,
-    ListItemText,
-    ListItemAvatar,
-    Avatar
+    ListItemText
 } from '@mui/material';
 import { getNews } from '../../utils/api';
 
@@ -17,7 +15,9 @@ const News = ({ top = 0 }) => {
     React.useEffect(() => {
         const controller = new AbortController();
         const signal = controller.signal;
-        getNews(signal).then(({ articles }) => setNews(articles));
+        getNews(signal).then((results) => {
+            setNews(results)
+        });
     }, [])
 
     if (news) {
@@ -55,14 +55,8 @@ const News = ({ top = 0 }) => {
                                 alignItems="flex-start"
                                 sx={{ width: '100%' }}
                             >
-                                <ListItemAvatar>
-                                    <Avatar 
-                                        alt={article.author}
-                                        src={article.urlToImage}
-                                    />
-                                </ListItemAvatar>
                                 <ListItemText 
-                                    primary={article.title}
+                                    primary={article.pillarName}
                                     secondary={
                                         <React.Fragment>
                                             <Typography
@@ -71,9 +65,9 @@ const News = ({ top = 0 }) => {
                                                 variant="body2"
                                                 color="text.primary"
                                             >
-                                                {article.description}
+                                                {article.webTitle}
                                             </Typography>
-                                            {` - by ${article.author}`}
+                                            {` - by ${article.sectionName}`}
                                         </React.Fragment>
                                     }
                                 />

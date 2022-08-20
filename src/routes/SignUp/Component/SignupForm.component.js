@@ -47,7 +47,7 @@ const SignupForm = () => {
         createUser({data: user}, signal).then((result) => {
             console.log(result);
             navigate("/login");
-        })
+        }).catch((error) => window.alert(error))
     }
 
     return (

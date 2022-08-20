@@ -48,6 +48,7 @@ const LoginForm = () => {
             console.log(cookies.get("TOKEN"))
             console.log(cookies.get("USERID"))
         }).then(() => navigate("/")).then(() => { window.location.reload(); })
+        .catch((error) => window.alert(error))
     }
 
     return (
